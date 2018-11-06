@@ -9,13 +9,39 @@
 
   <% include ./partials/navbar.ejs %>
 
-  <!-- <main class="container">
-    <header class="jumbotron my-4">
-      <h1 class="display-3 text-center">Welcome to Blocipedia</h1>
-    </header>
-  </main> -->
+  <main class="container text-center">
 
-  <% include ../users/signup.ejs %>
+    <% include ./partials/messages.ejs %>
+
+    <header class="jumbotron my-4">
+      <h1 class='display-3'>Welcome to Blocipedia</h1>
+      <p class="lead">An application for users to create and share wikis.</p>
+      <a href="/users/signup" class="btn btn-outline-dark btn-lg">Sign Up</a>
+
+    </header>
+
+    <section class="row">
+      <section class="col-lg-4">
+        <h4 class="card-title">Create</h4>
+        <p class="card-text">Create your own personal wikipedia page</p>
+      </section>
+
+      <section class="col-lg-4">
+        <h4 class="card-title">Share</h4>
+        <p class="card-text">Share your information with other users</p>
+      </section>
+
+      <section class="col-lg-4">
+        <h4 class="card-title">Stay Informed</h4>
+        <p class="card-text">Read wikis created by other users</p>
+      </section>
+    </section>
+
+
+  </main>
+
+
+
 
 
   <% include ./partials/baseScripts.ejs %>
