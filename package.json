@@ -2,10 +2,19 @@
   "name": "blocipedia-node",
   "version": "1.0.0",
   "description": "A wikipedia like application that allows users to create and share wikis.",
-  "main": "index.js",
+  "main": "src/server.js",
   "scripts": {
-    "test": "export NODE_ENV=test && jasmine"
+    "test": "export NODE_ENV=test && jasmine",
+    "start": "node src/server.js"
   },
   "author": "Navjeet Kaur",
-  "license": "ISC"
+  "license": "ISC",
+  "devDependencies": {
+    "jasmine": "^3.3.0",
+    "request": "^2.88.0"
+  },
+  "dependencies": {
+    "dotenv": "^6.1.0",
+    "express": "^4.16.4"
+  }
 }
