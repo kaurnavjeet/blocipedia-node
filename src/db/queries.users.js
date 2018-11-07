@@ -1,5 +1,7 @@
 const User = require("./models").User;
 const bcrypt = require("bcryptjs");
+const sgMail = require("@sendgrid/mail");
+sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
 module.exports = {
   createUser(newUser, callback) {
@@ -12,6 +14,14 @@ module.exports = {
       password: hashedPassword
     })
       .then(user => {
+        const msg = {
+          to: user.email,
+          from: "kaurnavjeet09@gmail.com",
+          subject: "Welcome to Blocipedia",
+          text: "Thank you for creating an account with Blocipedia",
+          html: "<strong>Thank you</strong>"
+        };
+        sgMail.send(msg);
         callback(null, user);
       })
       .catch(err => {
