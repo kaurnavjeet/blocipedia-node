@@ -30,18 +30,18 @@ describe("routes : users", () => {
       const options = {
         url: base,
         form: {
-          username: "username1",
-          email: "user@example.com",
-          password: "userexample"
+          username: "username2",
+          email: "user2@example.com",
+          password: "user2example"
         }
       };
 
       request.post(options, (err, res, body) => {
-        User.findOne({ where: { username: "username1" } })
+        User.findOne({ where: { email: "user2@example.com" } })
           .then(user => {
             expect(user).not.toBeNull();
-            expect(user.username).toBe("username1");
-            expect(user.email).toBe("user@example.com");
+            expect(user.username).toBe("username2");
+            expect(user.email).toBe("user2@example.com");
             expect(user.id).toBe(1);
             done();
           })
@@ -73,6 +73,15 @@ describe("routes : users", () => {
             });
         }
       );
+    });
+  });
+  describe("GET /users/signin", () => {
+    it("should render a view with a sign in form", done => {
+      request.get(`${base}signin`, (err, res, body) => {
+        expect(err).toBeNull();
+        expect(body).toContain("Sign in");
+        done();
+      });
     });
   });
 });

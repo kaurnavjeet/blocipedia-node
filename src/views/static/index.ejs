@@ -16,8 +16,9 @@
     <header class="jumbotron my-4">
       <h1 class='display-3'>Welcome to Blocipedia</h1>
       <p class="lead">An application for users to create and share wikis.</p>
+      <% if(!currentUser) { %>
       <a href="/users/signup" class="btn btn-outline-dark btn-lg">Sign Up</a>
-
+      <% } %>
     </header>
 
     <section class="row">
