@@ -21,6 +21,9 @@
       </li>
       <% }) %>
     </ul>
+    <% if(currentUser) { %>
+    <a href="/wikis/new" class="btn btn-outline-dark">New Wiki</a>
+    <% } %>
   </main>
 
   <% include ../static/partials/baseScripts.ejs %>

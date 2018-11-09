@@ -16,29 +16,24 @@ describe("routes : wikis", () => {
         username: "wikilover",
         email: "wikilover@example.com",
         password: "wikilover"
-      })
-        .then(user => {
-          this.user = user;
+      }).then(user => {
+        this.user = user;
 
-          Wiki.create({
-            title: "Wikipedia Lover",
-            body: "I love to share information",
-            private: false,
-            userId: this.user.id
-          })
-            .then(wiki => {
-              this.wiki = wiki;
-              done();
-            })
-            .catch(err => {
-              console.log(err);
-              done();
-            });
+        Wiki.create({
+          title: "Wikipedia Lover",
+          body: "I love to share information",
+          private: false,
+          userId: this.user.id
         })
-        .catch(err => {
-          console.log(err);
-          done();
-        });
+          .then(wiki => {
+            this.wiki = wiki;
+            done();
+          })
+          .catch(err => {
+            console.log(err);
+            done();
+          });
+      });
     });
   });
   describe("guest attempting to perform CRUD actions for Wiki", () => {
@@ -57,12 +52,126 @@ describe("routes : wikis", () => {
     });
 
     describe("GET /wikis", () => {
-      it("should return all wikis", done => {
+      it("should return a status code 200 all wikis", done => {
         request.get(base, (err, res, body) => {
+          expect(res.statusCode).toBe(200);
           expect(err).toBeNull();
           expect(body).toContain("Wikis");
           expect(body).toContain("Wikipedia Lover");
           done();
+        });
+      });
+    });
+    describe("GET /wikis/new", () => {
+      it("should not render a new wiki form", done => {
+        request.get(`${base}new`, (err, res, body) => {
+          expect(err).toBeNull();
+          expect(body).not.toContain("New Wiki");
+          expect(body).toContain("Wikipedia Lover");
+          done();
+        });
+      });
+    });
+    describe("POST /wikis/create", () => {
+      const options = {
+        url: `${base}create`,
+        form: {
+          title: "First Wiki",
+          body: "My first wiki is here",
+          private: false
+        }
+      };
+
+      it("should not create a new wiki and redirect", done => {
+        request.post(options, (err, res, body) => {
+          Wiki.findOne({ where: { title: "First Wiki" } })
+            .then(wiki => {
+              expect(wiki).toBeNull();
+              done();
+            })
+            .catch(err => {
+              console.log(err);
+              done();
+            });
+        });
+      });
+    });
+  });
+
+  describe("standard user attempting to perform CRUD actions on Wiki", () => {
+    beforeEach(done => {
+      User.create({
+        username: "standard",
+        email: "standard@example.com",
+        password: "standarduser",
+        role: 0
+      }).then(user => {
+        request.get(
+          {
+            url: "http://localhost:3000/auth/fake",
+            form: {
+              role: user.role,
+              userId: user.id,
+              email: user.email
+            }
+          },
+          (err, res, body) => {
+            done();
+          }
+        );
+      });
+    });
+    describe("GET /wikis/new", () => {
+      it("should render a form to create a new wiki", done => {
+        request.get(`${base}new`, (err, res, body) => {
+          expect(err).toBeNull();
+          expect(body).toContain("New Wiki");
+          done();
+        });
+      });
+    });
+    describe("POST /wikis/create", () => {
+      it("should create a new post and redirect", done => {
+        const options = {
+          url: `${base}create`,
+          form: {
+            title: "Create Wiki",
+            body: "Create your own Wiki",
+            private: false
+          }
+        };
+        request.post(options, (err, res, body) => {
+          Wiki.findOne({ where: { title: "Create Wiki" } })
+            .then(wiki => {
+              expect(wiki).not.toBeNull();
+              expect(wiki.title).toBe("Create Wiki");
+              expect(wiki.body).toBe("Create your own Wiki");
+              done();
+            })
+            .catch(err => {
+              console.log(err);
+              done();
+            });
+        });
+      });
+      it("should not create a new post that fails validations", done => {
+        const options = {
+          url: `${base}create`,
+          form: {
+            title: "a",
+            body: "b"
+          }
+        };
+        request.post(options, (err, res, body) => {
+          Wiki.findOne({ where: { title: "a" } })
+            .then(wiki => {
+              expect(wiki).toBeNull();
+              done();
+            })
+            .catch(err => {
+              console.log(err);
+              done();
+            });
         });
       });
     });

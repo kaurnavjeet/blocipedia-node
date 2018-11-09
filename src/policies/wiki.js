@@ -1,15 +1,19 @@
 const ApplicationPolicy = require("./application");
 
 module.exports = class WikiPolicy extends ApplicationPolicy {
+  new() {
+    return this.user && this.user.role === 0;
+  }
+
+  create() {
+    this.new();
+  }
+
   edit() {
-    return this._isOwner() || this._isAdmin();
+    return this.user != null;
   }
 
   update() {
     return this.edit();
-  }
-
-  destroy() {
-    return this.update();
   }
 };
