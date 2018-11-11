@@ -1,15 +1,17 @@
 module.exports = {
   fakeIt(app) {
-    let role, id, email;
+    let role, username, id, email;
 
     function middleware(req, res, next) {
       role = req.body.role || role;
+      username = req.body.username || username;
       id = req.body.userId || id;
       email = req.body.email || email;
 
       if (id && id != 0) {
         req.user = {
           id: id,
+          username: username,
           role: role,
           email: email
         };

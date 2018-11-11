@@ -20,8 +20,8 @@ describe("routes : wikis", () => {
         this.user = user;
 
         Wiki.create({
-          title: "Wikipedia Lover",
-          body: "I love to share information",
+          title: "Wiki 1",
+          body: "Wiki 1 is the first wiki",
           private: false,
           userId: this.user.id
         })
@@ -57,7 +57,7 @@ describe("routes : wikis", () => {
           expect(res.statusCode).toBe(200);
           expect(err).toBeNull();
           expect(body).toContain("Wikis");
-          expect(body).toContain("Wikipedia Lover");
+          expect(body).toContain("Wiki 1");
           done();
         });
       });
@@ -67,7 +67,7 @@ describe("routes : wikis", () => {
         request.get(`${base}new`, (err, res, body) => {
           expect(err).toBeNull();
           expect(body).not.toContain("New Wiki");
-          expect(body).toContain("Wikipedia Lover");
+          expect(body).toContain("Wiki 1");
           done();
         });
       });
@@ -78,7 +78,8 @@ describe("routes : wikis", () => {
         form: {
           title: "First Wiki",
           body: "My first wiki is here",
-          private: false
+          private: false,
+          userId: 0
         }
       };
 
@@ -93,6 +94,62 @@ describe("routes : wikis", () => {
               console.log(err);
               done();
             });
+        });
+      });
+    });
+    describe("GET /wikis/:id", () => {
+      it("should render a view with the selected wiki", done => {
+        request.get(`${base}${this.wiki.id}`, (err, res, body) => {
+          expect(err).toBeNull();
+          expect(body).toContain("Wiki 1");
+          done();
+        });
+      });
+    });
+    describe("POST /wikis/:id/destroy", () => {
+      it("should not delete the topic with the associated ID", done => {
+        Wiki.all().then(wikis => {
+          const wikiCountBeforeDelete = wikis.length;
+          expect(wikiCountBeforeDelete).toBe(1);
+
+          request.post(`${base}${this.wiki.id}/destroy`, (err, res, body) => {
+            Wiki.all().then(wikis => {
+              expect(err).toBeNull();
+              expect(wikis.length).toBe(wikiCountBeforeDelete);
+              done();
+            });
+          });
+        });
+      });
+    });
+    describe("GET /wikis/:id/edit", () => {
+      it("should not render a view with an edit wiki form", done => {
+        request.get(`${base}${this.wiki.id}/edit`, (err, res, body) => {
+          expect(err).toBeNull();
+          expect(body).not.toContain("Edit Wiki");
+          expect(body).toContain("Wiki 1");
+          done();
+        });
+      });
+    });
+    describe("POST /wikis/:id/update", () => {
+      it("should not update the topic with the given value", done => {
+        const options = {
+          url: `${base}${this.wiki.id}/update`,
+          form: {
+            title: "Wiki 2",
+            body: "Wiki 2 is better than Wiki 1"
+          }
+        };
+
+        request.post(options, (err, res, body) => {
+          expect(err).toBeNull();
+          Wiki.findOne({
+            where: { id: this.wiki.id }
+          }).then(wiki => {
+            expect(wiki.title).toBe("Wiki 1");
+            done();
+          });
         });
       });
     });
@@ -111,6 +168,7 @@ describe("routes : wikis", () => {
             url: "http://localhost:3000/auth/fake",
             form: {
               role: user.role,
+              username: user.username,
               userId: user.id,
               email: user.email
             }
@@ -137,7 +195,8 @@ describe("routes : wikis", () => {
           form: {
             title: "Create Wiki",
             body: "Create your own Wiki",
-            private: false
+            private: false,
+            userId: this.user.id
           }
         };
         request.post(options, (err, res, body) => {
@@ -172,6 +231,60 @@ describe("routes : wikis", () => {
               console.log(err);
               done();
             });
+        });
+      });
+    });
+    describe("GET /wikis/:id", () => {
+      it("should render a view with the selected wiki", done => {
+        request.get(`${base}${this.wiki.id}`, (err, res, body) => {
+          expect(err).toBeNull();
+          expect(body).toContain("Wiki 1");
+          done();
+        });
+      });
+    });
+    describe("POST /wikis/:id/destroy", () => {
+      it("should delete the wiki with the associated id", done => {
+        Wiki.all().then(wikis => {
+          const wikiCountBeforeDelete = wikis.length;
+          expect(wikiCountBeforeDelete).toBe(1);
+
+          request.post(`${base}${this.wiki.id}/destroy`, (err, res, body) => {
+            Wiki.all().then(wikis => {
+              expect(err).toBeNull();
+              expect(wikis.length).toBe(wikiCountBeforeDelete - 1);
+              done();
+            });
+          });
+        });
+      });
+    });
+    describe("GET /wikis/:id/edit", () => {
+      it("should render a view with end edit wiki form", done => {
+        request.get(`${base}${this.wiki.id}/edit`, (err, res, body) => {
+          expect(err).toBeNull();
+          expect(body).toContain("Edit Wiki");
+          expect(body).toContain("Wiki 1");
+          done();
+        });
+      });
+    });
+    describe("POST /wikis/:id/update", () => {
+      it("should update the wiki with the given values", done => {
+        const options = {
+          url: `${base}${this.wiki.id}/update`,
+          form: {
+            title: "Wiki 3",
+            body: "Wiki 3 is better than Wiki 1"
+          }
+        };
+
+        request.post(options, (err, res, body) => {
+          expect(err).toBeNull();
+          Wiki.findOne({ where: { id: this.wiki.id } }).then(wiki => {
+            expect(wiki.title).toBe("Wiki 3");
+            done();
+          });
         });
       });
     });
