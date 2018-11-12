@@ -2,6 +2,9 @@ const userQueries = require("../db/queries.users.js");
 const passport = require("passport");
 
 module.exports = {
+  chooseType(req, res, next) {
+    res.render("users/chooseType");
+  },
   signUp(req, res, next) {
     res.render("users/signup");
   },

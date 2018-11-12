@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <% include ../static/partials/head.ejs %>
+</head>
+
+<body>
+
+  <% include ../static/partials/navbar.ejs %>
+
+  <main class="container">
+    <% include ../static/partials/messages.ejs %>
+
+    <h1>Choose your account</h1>
+    <div class="card-deck">
+      <div class="card">
+        <div class="card-body">
+          <h5 class="card-title">Standard</h5>
+          <p class="card-text">Create Public Wikis</p>
+          <p class="card-text">Edit Public Wikis</p>
+          <p class="card-text">Read Public Wikis</p>
+          <a href="/users/signup" class="btn btn-outline-dark">Free</a>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-body">
+          <h5 class="card-title">Premium</h5>
+          <p class="card-text">Create Private Wikis</p>
+          <p class="card-text">Edit Public & Private Wikis</p>
+          <p class="card-text">Read Public & Private Wikis</p>
+          <a href="/users/premiumsignup" class="btn btn-outline-dark">$15/<small>month</small></a>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <% include ../static/partials/baseScripts.ejs %>
+
+</body>
+
+</html>
